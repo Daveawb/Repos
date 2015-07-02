@@ -1,0 +1,29 @@
+{
+    "name": "david/daveawb-repository",
+    "description": "A generic repository for Laravel",
+    "require": {
+
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7",
+        "orchestra/testbench": "~3.2@dev"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Daveawb\\Repos\\" : "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4" : {
+            "Classes\\" : "tests/Classes"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Barker",
+            "email": "david.aw.barker@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
