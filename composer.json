@@ -1,5 +1,5 @@
 {
-    "name": "david/daveawb-repository",
+    "name": "daveawb/repository",
     "description": "A generic repository for Laravel",
     "require": {
 
