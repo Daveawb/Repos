@@ -121,6 +121,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     public function update(array $data, $field, $id)
     {
+        $this->applyCriteria();
+        
         return $this->model->where($field, $id)->update($data);
     }
 
@@ -133,6 +135,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     public function paginate($perPage = 10, array $columns = ['*'])
     {
+        $this->applyCriteria();
+        
         return $this->model->paginate($perPage, $columns);
     }
 
@@ -145,6 +149,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     public function delete($field, $id)
     {
+        $this->applyCriteria();
+        
         return $this->model->where($field, $id)->delete();
     }
 
