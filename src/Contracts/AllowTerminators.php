@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: david
- * Date: 14/05/15
- * Time: 14:53
- */
 
 namespace Daveawb\Repos\Contracts;
-
-use Daveawb\Repos\Terminator;
 
 /**
  * Interface AllowTerminators
@@ -20,9 +12,9 @@ interface AllowTerminators {
      * This special type of criteria will return a
      * result set rather than modifying the model/builder.
      *
-     * @param Terminator $terminator
-     *
+     * @param string $terminator
+     * @param array $args
      * @return mixed
      */
-    public function findByTerminator(Terminator $terminator);
+    public function getByTerminator($terminator, array $args = []);
 }

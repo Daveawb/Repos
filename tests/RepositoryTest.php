@@ -247,7 +247,7 @@ class RepositoryTest extends TestCase {
     {
         $repo = $this->repoFactory();
 
-        $data = $repo->findByTerminator(new UsernameTerminator());
+        $data = $repo->getByTerminator(UsernameTerminator::class);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $data);
         $this->assertEquals('daveawb', $data->username);
@@ -260,6 +260,6 @@ class RepositoryTest extends TestCase {
 
     private function usernameCriteria()
     {
-        return new UsernameCriteria();
+        return UsernameCriteria::class;
     }
 }

@@ -200,22 +200,25 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
     /**
      * @param Criteria $criteria
+     * @param array $args
      * @return $this
      */
-    public function getByCriteria(Criteria $criteria)
+    public function getByCriteria($criteria, array $args = [])
     {
-        $this->model = $criteria->apply($this->model, $this);
+        $this->model = $this->criteriaFactory($criteria, $args)
+            ->apply($this->model, $this);
 
         return $this;
     }
 
     /**
-     * @param Criteria $criteria
+     * @param string $criteria
+     * @param array $args
      * @return $this
      */
-    public function pushCriteria(Criteria $criteria)
+    public function pushCriteria($criteria, array $args = [])
     {
-        $this->criteria->push($criteria);
+        $this->criteria->push([$criteria, $args]);
 
         return $this;
     }
@@ -230,7 +233,9 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
         foreach($this->getCriteria() as $criteria)
         {
-            $this->getByCriteria($criteria);
+            list($class, $args) = $criteria;
+
+            $this->getByCriteria($class, $args);
         }
 
         return $this;
@@ -241,12 +246,31 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * This special type of criteria will return a
      * result set rather than modifying the model/builder.
      *
-     * @param Terminator $terminator
-     *
+     * @param string $terminator
+     * @param array $args
      * @return mixed
      */
-    public function findByTerminator(Terminator $terminator)
+    public function getByTerminator($terminator, array $args = [])
     {
-        return $terminator->apply($this->model, $this);
+        return $this->criteriaFactory($terminator, $args)->apply($this->model, $this);
+    }
+
+    /**
+     * Criteria factory method
+     *
+     * @param $class
+     * @param array $args
+     * @return mixed
+     * @throws RepositoryException
+     */
+    private function criteriaFactory($class, array $args)
+    {
+        $criteria = $this->app->make($class, $args);
+
+        if ( ! $criteria instanceof Criteria) {
+            throw new RepositoryException("{$class} is not an instance of Criteria");
+        }
+
+        return $criteria;
     }
 }
