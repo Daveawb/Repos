@@ -1,4 +1,4 @@
-# Laravel Smart Repositories
+# Repositories for Laravel 5.1
 
 A repository package to add easy to use repositories to any Laravel project utilising Eloquent as the primary DAL. Tested in Laravel 5.1.
 
@@ -29,3 +29,6 @@ class Repository extends \Daveawb\Repos\Repository
 ### Criteria
 
 ### Terminators
+
+### Credits
+[A repository pattern for Laravel 5.1 by andersao](https://github.com/andersao/l5-repository)
