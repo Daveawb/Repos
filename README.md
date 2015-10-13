@@ -26,6 +26,7 @@ class Repository extends \Daveawb\Repos\Repository
 
 #### Available API methods
 | method | signature | return |
+|--------|-----------|--------|
 | findAll | array $columns = ['*'] | Illuminate\Database\Eloquent\Collection |
 | findBy  | $field, $id, array $columns = ['*'] | Illuminate\Database\Eloquent\Model |
 | findByMethod | $method | array $columns = ['*'] | \Illuminate\Database\Eloquent\Collection | \Illuminate\Database\Eloquent\Model | void |
