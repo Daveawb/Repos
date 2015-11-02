@@ -253,6 +253,17 @@ class RepositoryTest extends TestCase {
         $this->assertEquals('daveawb', $data->username);
     }
 
+    public function testRepositoryFlushesModel()
+    {
+        $repo = $this->repoFactory();
+
+        $model = $repo->getModel();
+
+        $repo->flushModel();
+
+        $this->assertNotSame($model, $repo->getModel());
+    }
+
     private function repoFactory()
     {
         return new Repository($this->app, new Collection());

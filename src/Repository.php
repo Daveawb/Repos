@@ -273,4 +273,28 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
         return $criteria;
     }
+
+    /**
+     * Flush the repositories model and replace with a fresh one
+     */
+    public function flushModel()
+    {
+        $this->model = $this->newModel();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+    }
 }
