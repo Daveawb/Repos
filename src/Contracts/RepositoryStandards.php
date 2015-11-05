@@ -45,7 +45,7 @@ interface RepositoryStandards {
      * @param array $data
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function create(array $data);
+    public function create($data);
 
     /**
      * Update a model where $column === $id

@@ -111,6 +111,28 @@ class RepositoryTest extends TestCase {
         $this->assertTrue(Hash::check("testymctest", $model->password));
     }
 
+    public function testRepositoryPersistsDataUsingACallable()
+    {
+        $persisted = $this->repoFactory()->create(function($model) {
+            $model->fill([
+                "first_name" => "Testy",
+                "last_name" => "McTest",
+                "username" => "mctester",
+                "email" => "testy.mctest@mctesters.com",
+                "password" => "testymctest"
+            ]);
+        });
+
+        $model = $this->repoFactory()->findBy('email', "testy.mctest@mctesters.com");
+
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $persisted);
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
+        $this->assertEquals("Testy", $model->first_name);
+        $this->assertEquals("mctester", $model->username);
+        $this->assertEquals("testy.mctest@mctesters.com", $model->email);
+        $this->assertTrue(Hash::check("testymctest", $model->password));
+    }
+
     public function testRepositoryUpdatesData()
     {
         $model = $this->repoFactory()->findBy('id', 1);

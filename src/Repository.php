@@ -103,12 +103,22 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     /**
      * Persist a new set of data
      *
-     * @param array $data
+     * @param array|callable $data
      * @return \Illuminate\Database\Eloquent\Model|static
      */
-    public function create(array $data)
+    public function create($data)
     {
-        return $this->model->create($data);
+        if (is_callable($data)) {
+            $model = $this->newModel();
+
+            call_user_func($data, $model);
+
+            $model->save();
+        } else {
+            $model = $this->model->create($data);
+        }
+
+        return $model;
     }
 
     /**
@@ -226,7 +236,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     /**
      * @return $this
      */
-    public function  applyCriteria()
+    public function applyCriteria()
     {
         if($this->skipCriteria === true)
             return $this;
