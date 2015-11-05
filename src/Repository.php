@@ -113,7 +113,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
             call_user_func($data, $model);
 
-            $model->save();
+            $model->push();
         } else {
             $model = $this->model->create($data);
         }

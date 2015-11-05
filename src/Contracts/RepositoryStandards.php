@@ -42,7 +42,7 @@ interface RepositoryStandards {
     /**
      * Persist a new set of data
      *
-     * @param array $data
+     * @param callable|array $data
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function create($data);
