@@ -7,6 +7,7 @@ use Daveawb\Repos\Contracts\AllowTerminators;
 use Daveawb\Repos\Contracts\RepositoryStandards;
 use Daveawb\Repos\Exceptions\RepositoryException;
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
@@ -303,7 +304,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     /**
      * @param \Illuminate\Database\Eloquent\Model $model
      */
-    public function setModel($model)
+    public function setModel(Model $model)
     {
         $this->model = $model;
     }

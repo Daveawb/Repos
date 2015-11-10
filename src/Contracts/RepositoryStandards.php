@@ -3,6 +3,7 @@
 namespace Daveawb\Repos\Contracts;
 
 use Daveawb\Repos\Exceptions\RepositoryException;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Interface RepositoryStandards
@@ -83,5 +84,26 @@ interface RepositoryStandards {
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function newModel($override = null);
+
+    /**
+     * Flush the repositories model and replace with a fresh one
+     *
+     * @return void
+     */
+    public function flushModel();
+
+    /**
+     * Get the model or builder in its current state
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function getModel();
+
+    /**
+     * Set a model on the repository
+     *
+     * @param Model $model
+     */
+    public function setModel(Model $model);
 
 }
