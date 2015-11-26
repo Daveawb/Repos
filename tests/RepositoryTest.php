@@ -61,7 +61,7 @@ class RepositoryTest extends TestCase {
 
     public function testRepositoryRetrievesAModelByID()
     {
-        $model = $this->repoFactory()->findBy('id', 1);
+        $model = $this->repoFactory()->findById(1);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
     }
@@ -143,11 +143,11 @@ class RepositoryTest extends TestCase {
         $this->assertEquals("daveawb@hotmail.com", $model->email);
         $this->assertTrue(Hash::check($model->salt . "secret", $model->password));
 
-        $this->repoFactory()->update([
+        $model = $this->repoFactory()->update([
             "first_name" => "Not David Barker"
         ], 'id', 1);
 
-        $model = $this->repoFactory()->findBy('id', 1);
+//        $model = $this->repoFactory()->findBy('id', 1);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
         $this->assertEquals("Not David Barker", $model->first_name);

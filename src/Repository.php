@@ -8,6 +8,7 @@ use Daveawb\Repos\Contracts\RepositoryStandards;
 use Daveawb\Repos\Exceptions\RepositoryException;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
 abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTerminators {
 
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var Model|Builder
      */
     protected $model;
 
@@ -82,6 +83,17 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     }
 
     /**
+     * @param $id
+     * @param array $columns
+     * @return Model
+     * @throws RepositoryException
+     */
+    public function findById($id, array $columns = ['*'])
+    {
+        return $this->findBy($this->model->getKeyName(), $id, $columns);
+    }
+
+    /**
      * Find models using $method as the terminator
      *
      * @param $method
@@ -109,8 +121,10 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     public function create($data)
     {
+        $this->flushModel();
+
         if (is_callable($data)) {
-            $model = $this->newModel();
+            $model = $this->model;
 
             call_user_func($data, $model);
 
@@ -129,12 +143,19 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param $field
      * @param $id
      * @return bool|int
+     * @throws RepositoryException
      */
     public function update(array $data, $field, $id)
     {
         $this->applyCriteria();
-        
-        return $this->model->where($field, $id)->update($data);
+
+        $update = $this->model->where($field, $id)->update($data);
+
+        if ( ! $update ) {
+            throw new RepositoryException("Model could not be updated.");
+        }
+
+        return $this->findBy($field, $id);
     }
 
     /**
@@ -239,6 +260,9 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     public function applyCriteria()
     {
+        // Clear out any previous modifications
+        $this->flushModel();
+
         if($this->skipCriteria === true)
             return $this;
 
