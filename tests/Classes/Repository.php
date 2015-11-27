@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: david
- * Date: 11/05/15
- * Time: 14:27
- */
 
 namespace Classes;
-
-use Daveawb\Repos\Exceptions\RepositoryException;
 
 /**
  * Class Repository

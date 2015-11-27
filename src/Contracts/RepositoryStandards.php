@@ -106,4 +106,11 @@ interface RepositoryStandards {
      */
     public function setModel(Model $model);
 
+    /**
+     * Get a fresh instance of the repository.
+     *
+     * @return mixed
+     */
+    public function newInstance();
+
 }

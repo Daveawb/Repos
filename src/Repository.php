@@ -332,4 +332,12 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     {
         $this->model = $model;
     }
+
+    /**
+     * @return Repository
+     */
+    public function newInstance()
+    {
+        return new static($this->app, new Collection());
+    }
 }

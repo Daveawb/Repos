@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -38,6 +39,14 @@ class RepositoryTest extends TestCase {
             "last_name" => "Barker",
             "username" => "daveawb",
             "email" => "daveawb@hotmail.com",
+            "password" => 'secret'
+        ]);
+
+        Classes\User::create([
+            "first_name" => "Simon",
+            "last_name" => "Holloway",
+            "username" => "syhol",
+            "email" => "simon@syhol.io",
             "password" => 'secret'
         ]);
 
@@ -284,6 +293,32 @@ class RepositoryTest extends TestCase {
         $repo->flushModel();
 
         $this->assertNotSame($model, $repo->getModel());
+    }
+
+    public function testRepositoryNewInstance()
+    {
+        $repo = $this->repoFactory();
+
+        $repo->pushCriteria($this->usernameCriteria());
+
+        $newRepo = $repo->newInstance();
+
+        $this->assertNotSame($repo, $newRepo);
+    }
+
+    public function testRepositoryGetsDifferentResultsBetweenInstances()
+    {
+        $repo = $this->repoFactory();
+
+        $repo->pushCriteria($this->usernameCriteria());
+
+        $newRepo = $repo->newInstance();
+
+        $this->assertEmpty($newRepo->getCriteria());
+        $this->assertNotEmpty($repo->getCriteria());
+
+        $this->assertTrue($repo->findAll()->count() === 1);
+        $this->assertTrue($newRepo->findAll()->count() > 1);
     }
 
     private function repoFactory()
