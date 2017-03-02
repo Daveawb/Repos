@@ -2,8 +2,6 @@
 
 namespace Daveawb\Repos\Contracts;
 
-use Daveawb\Repos\Criteria;
-
 /**
  * Interface AllowCriteria
  * @package Daveawb\Repos\Contracts

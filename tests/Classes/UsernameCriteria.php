@@ -3,7 +3,8 @@
 namespace Classes;
 
 use Daveawb\Repos\Criteria;
-use Daveawb\Repos\Repository as BaseRespository;
+use Daveawb\Repos\Repository as BaseRepository;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class UsernameCriteria
@@ -14,11 +15,11 @@ class UsernameCriteria extends Criteria {
     /**
      * Add criteria to the next query by the repository.
      *
-     * @param $model
-     * @param BaseRespository|Repository $repository
+     * @param Builder $model
+     * @param BaseRepository|Repository $repository
      * @return mixed
      */
-    public function apply($model, BaseRespository $repository)
+    public function apply($model, BaseRepository $repository)
     {
         return $model->where('username', '=', 'daveawb');
     }
