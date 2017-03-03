@@ -1,6 +1,6 @@
-# Repositories for Laravel 5.1
+# Repositories for Laravel 5.3
 
-A repository package to add easy to use repositories to any Laravel project utilising Eloquent as the primary DAL. Tested in Laravel 5.1.
+A repository package to add easy to use repositories to any Laravel project utilising Eloquent as the primary DAL. Tested in Laravel 5.3.
 
 ### Installation
 `composer require daveawb/repos`
