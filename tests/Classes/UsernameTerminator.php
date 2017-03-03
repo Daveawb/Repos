@@ -4,6 +4,7 @@ namespace Classes;
 
 use Daveawb\Repos\Repository as BaseRespository;
 use Daveawb\Repos\Terminator;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class UsernameTerminator
@@ -14,7 +15,7 @@ class UsernameTerminator extends Terminator{
     /**
      * Get data using the models current state.
      *
-     * @param                   $model
+     * @param Builder           $model
      * @param BaseRespository   $repository
      *
      * @return mixed

@@ -65,9 +65,10 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     /**
      * Find models where $column === $id
      *
-     * @param $field
-     * @param $id
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param string $field
+     * @param mixed $id
+     * @param array $columns
+     * @return Model
      * @throws RepositoryException
      */
     public function findBy($field, $id, array $columns = ['*'])
@@ -98,7 +99,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param $method
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|void
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      * @throws RepositoryException
      */
     public function findByMethod($method, array $columns = ['*'])
@@ -117,7 +118,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * Persist a new set of data
      *
      * @param array|callable $data
-     * @return \Illuminate\Database\Eloquent\Model|static
+     * @return Model|Builder
      */
     public function create($data)
     {
@@ -142,7 +143,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $data
      * @param $field
      * @param $id
-     * @return bool|int
+     * @return Model
      * @throws RepositoryException
      */
     public function update(array $data, $field, $id)
@@ -179,7 +180,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param int $perPage
      * @param array $columns
-     * @return \Illuminate\Pagination\AbstractPaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = 10, array $columns = ['*'])
     {
@@ -311,7 +312,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param $class
      * @param array $args
-     * @return mixed
+     * @return Criteria
      * @throws RepositoryException
      */
     private function criteriaFactory($class, array $args)
