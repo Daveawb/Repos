@@ -1,12 +1,13 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Classes\Repository;
-use Classes\UsernameCriteria;
-use Classes\UsernameTerminator;
+use Classes\NameCriteria;
+use Classes\NameTerminator;
 use Orchestra\Testbench\TestCase;
 
 /**
@@ -15,8 +16,13 @@ use Orchestra\Testbench\TestCase;
  */
 class RepositoryTest extends TestCase {
 
+    use DatabaseMigrations;
+    use DatabaseTransactions;
+
     protected function getEnvironmentSetUp($app)
     {
+        $app->register(\Orchestra\Database\ConsoleServiceProvider::class);
+
         $app['config']->set('database.default', 'tests');
         $app['config']->set('database.connections.tests', [
             'driver'   => 'sqlite',
@@ -29,33 +35,22 @@ class RepositoryTest extends TestCase {
     {
         parent::setUp();
 
-        $this->artisan('migrate', [
+        $this->loadLaravelMigrations([
             '--database' => 'tests',
-            '--realpath' => realpath(__DIR__.'/migrations'),
+            '--path' => 'migrations'
         ]);
 
         Classes\User::create([
-            "first_name" => "David",
-            "last_name" => "Barker",
-            "username" => "daveawb",
+            "name" => "David Barker",
             "email" => "daveawb@hotmail.com",
             "password" => 'secret'
         ]);
 
         Classes\User::create([
-            "first_name" => "Simon",
-            "last_name" => "Holloway",
-            "username" => "syhol",
+            "name" => "Simon Holloway",
             "email" => "simon@syhol.io",
             "password" => 'secret'
         ]);
-
-        DB::beginTransaction();
-    }
-
-    public function tearDown()
-    {
-        DB::rollback();
     }
 
     public function testRepositoryIsCreated()
@@ -87,10 +82,9 @@ class RepositoryTest extends TestCase {
     {
         $repo = $this->repoFactory();
 
-        $model = $repo->findBy('id', 1, ['id', 'username']);
+        $model = $repo->findBy('id', 1, ['id']);
 
-        $this->assertNotNull($model->username);
-        $this->assertNull($model->first_name);
+        $this->assertNull($model->name);
     }
 
     public function testRepositoryRetrievesAllModels()
@@ -103,9 +97,7 @@ class RepositoryTest extends TestCase {
     public function testRepositoryPersistsData()
     {
         $persisted = $this->repoFactory()->create([
-            "first_name" => "Testy",
-            "last_name" => "McTest",
-            "username" => "mctester",
+            "name" => "Testy McTest",
             "email" => "testy.mctest@mctesters.com",
             "password" => "testymctest"
         ]);
@@ -114,8 +106,7 @@ class RepositoryTest extends TestCase {
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $persisted);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
-        $this->assertEquals("Testy", $model->first_name);
-        $this->assertEquals("mctester", $model->username);
+        $this->assertEquals("Testy McTest", $model->name);
         $this->assertEquals("testy.mctest@mctesters.com", $model->email);
         $this->assertTrue(Hash::check("testymctest", $model->password));
     }
@@ -124,9 +115,7 @@ class RepositoryTest extends TestCase {
     {
         $persisted = $this->repoFactory()->create(function($model) {
             $model->fill([
-                "first_name" => "Testy",
-                "last_name" => "McTest",
-                "username" => "mctester",
+                "name" => "Testy McTest",
                 "email" => "testy.mctest@mctesters.com",
                 "password" => "testymctest"
             ]);
@@ -136,8 +125,7 @@ class RepositoryTest extends TestCase {
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $persisted);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
-        $this->assertEquals("Testy", $model->first_name);
-        $this->assertEquals("mctester", $model->username);
+        $this->assertEquals("Testy McTest", $model->name);
         $this->assertEquals("testy.mctest@mctesters.com", $model->email);
         $this->assertTrue(Hash::check("testymctest", $model->password));
     }
@@ -147,19 +135,18 @@ class RepositoryTest extends TestCase {
         $model = $this->repoFactory()->findBy('id', 1);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
-        $this->assertEquals("David", $model->first_name);
-        $this->assertEquals("Barker", $model->last_name);
+        $this->assertEquals("David Barker", $model->name);
         $this->assertEquals("daveawb@hotmail.com", $model->email);
         $this->assertTrue(Hash::check($model->salt . "secret", $model->password));
 
         $model = $this->repoFactory()->update([
-            "first_name" => "Not David Barker"
+            "name" => "Not David Barker"
         ], 'id', 1);
 
 //        $model = $this->repoFactory()->findBy('id', 1);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $model);
-        $this->assertEquals("Not David Barker", $model->first_name);
+        $this->assertEquals("Not David Barker", $model->name);
         $this->assertEquals("daveawb@hotmail.com", $model->email);
         $this->assertTrue(Hash::check($model->salt . "secret", $model->password));
     }
@@ -169,7 +156,7 @@ class RepositoryTest extends TestCase {
         $model = $this->repoFactory()->findBy('id', 1);
 
         $result = $this->repoFactory()->updateModel([
-            "first_name" => "Not David Barker"
+            "name" => "Not David Barker"
         ], $model);
 
         $this->assertTrue($result);
@@ -180,7 +167,7 @@ class RepositoryTest extends TestCase {
         $model = $this->repoFactory()->findBy('id', 1);
 
         $result = $this->repoFactory()->updateModel([
-            "first_name" => $model->first_name
+            "name" => $model->name
         ], $model);
 
         $this->assertFalse($result);
@@ -214,14 +201,13 @@ class RepositoryTest extends TestCase {
     {
         $repo = $this->repoFactory();
 
-        $data = $repo->paginate(1, ['first_name']);
+        $data = $repo->paginate(1, ['name']);
 
         $this->assertInstanceOf('Illuminate\Pagination\AbstractPaginator', $data);
 
         foreach ($data as $model)
         {
-            $this->assertNotNull($model->first_name);
-            $this->assertNull($model->username);
+            $this->assertNotNull($model->name);
         }
     }
 
@@ -300,10 +286,10 @@ class RepositoryTest extends TestCase {
     {
         $repo = $this->repoFactory();
 
-        $data = $repo->getByTerminator(UsernameTerminator::class);
+        $data = $repo->getByTerminator(NameTerminator::class);
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $data);
-        $this->assertEquals('daveawb', $data->username);
+        $this->assertEquals('David Barker', $data->name);
     }
 
     public function testRepositoryFlushesModel()
@@ -350,6 +336,6 @@ class RepositoryTest extends TestCase {
 
     private function usernameCriteria()
     {
-        return UsernameCriteria::class;
+        return NameCriteria::class;
     }
 }

@@ -13,7 +13,7 @@ class User extends Model {
     /**
      * @var array
      */
-    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'username'];
+    protected $fillable = ['name', 'email', 'password'];
 
     /**
      * @var array

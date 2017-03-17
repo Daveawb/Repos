@@ -7,10 +7,10 @@ use Daveawb\Repos\Repository as BaseRepository;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class UsernameCriteria
+ * Class NameCriteria
  * @package Daveawb\Tests\Classes
  */
-class UsernameCriteria extends Criteria {
+class NameCriteria extends Criteria {
 
     /**
      * Add criteria to the next query by the repository.
@@ -21,6 +21,6 @@ class UsernameCriteria extends Criteria {
      */
     public function apply($model, BaseRepository $repository)
     {
-        return $model->where('username', '=', 'daveawb');
+        return $model->where('name', '=', 'David Barker');
     }
 }

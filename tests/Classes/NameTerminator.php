@@ -7,10 +7,10 @@ use Daveawb\Repos\Terminator;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class UsernameTerminator
+ * Class NameTerminator
  * @package Daveawb\Tests\Classes
  */
-class UsernameTerminator extends Terminator{
+class NameTerminator extends Terminator{
 
     /**
      * Get data using the models current state.
@@ -22,6 +22,6 @@ class UsernameTerminator extends Terminator{
      */
     public function apply($model, BaseRespository $repository)
     {
-        return $model->where('username', 'daveawb')->first();
+        return $model->where('name', 'David Barker')->first();
     }
 }
