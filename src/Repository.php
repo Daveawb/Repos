@@ -17,6 +17,9 @@ use Illuminate\Support\Collection;
  */
 abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTerminators {
 
+    const NO_FLUSH = 0;
+    const FLUSH = 1;
+
     /**
      * @var Model|Builder
      */
@@ -120,9 +123,11 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array|callable $data
      * @return Model|Builder
      */
-    public function create($data)
+    public function create($data, int $flush = self::FLUSH)
     {
-        $this->flushModel();
+        if ($flush === self::FLUSH) {
+            $this->flushModel();
+        }
 
         if (is_callable($data)) {
             $model = $this->model;
