@@ -5,7 +5,6 @@ namespace Daveawb\Repos;
 use Daveawb\Repos\Contracts\AllowCriteria;
 use Daveawb\Repos\Contracts\AllowTerminators;
 use Daveawb\Repos\Contracts\RepositoryStandards;
-use Daveawb\Repos\Exceptions\EmptyChangesetException;
 use Daveawb\Repos\Exceptions\RepositoryException;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
@@ -122,9 +121,10 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * Persist a new set of data
      *
      * @param array|callable $data
+     * @param int $flush
      * @return Model|Builder
      */
-    public function create($data, int $flush = self::FLUSH)
+    public function create($data, $flush = self::FLUSH)
     {
         if ($flush === self::FLUSH) {
             $this->flushModel();
@@ -149,26 +149,18 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $data
      * @param $field
      * @param $id
-     * @param bool $ignoreEmptyChangeset if true, this method will not throw if no changes are detected
      * @return Model
-     * @throws EmptyChangesetException
-     * @throws RepositoryException
      */
-    public function update(array $data, $field, $id, $ignoreEmptyChangeset = false)
+    public function update(array $data, $field, $id)
     {
         $this->applyCriteria();
 
-        $update = $this->model->where($field, $id)->update($data);
+        /** @var Model $model */
+        $model = $this->model->where($field, $id)->first();
 
-        $errorCode = $this->model->getConnection()->getPdo()->errorCode();
+        $model->fill($data)->save();
 
-        if ($errorCode != \PDO::ERR_NONE) {
-            throw new RepositoryException("Model could not be updated.");
-        } elseif (! $update && ! $ignoreEmptyChangeset) {
-            throw new EmptyChangesetException();
-        }
-
-        return $this->findBy($field, $id);
+        return $model;
     }
 
     /**
