@@ -66,6 +66,17 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     }
 
     /**
+     * @param $id
+     * @param array $columns
+     * @return Model
+     * @throws RepositoryException
+     */
+    public function findById($id, array $columns = ['*'])
+    {
+        return $this->findBy($this->model->getKeyName(), $id, $columns);
+    }
+
+    /**
      * Find models where $column === $id
      *
      * @param string $field
@@ -79,22 +90,10 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
         $this->applyCriteria();
 
         $model = $this->model->where($field, $id)->first($columns);
-
         if ( ! $model )
             throw new RepositoryException("Model does not exist.");
 
         return $model;
-    }
-
-    /**
-     * @param $id
-     * @param array $columns
-     * @return Model
-     * @throws RepositoryException
-     */
-    public function findById($id, array $columns = ['*'])
-    {
-        return $this->findBy($this->model->getKeyName(), $id, $columns);
     }
 
     /**
@@ -189,7 +188,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     public function paginate($perPage = 10, array $columns = ['*'])
     {
         $this->applyCriteria();
-        
+
         return $this->model->paginate($perPage, $columns);
     }
 
@@ -203,7 +202,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     public function delete($field, $id)
     {
         $this->applyCriteria();
-        
+
         return $this->model->where($field, $id)->delete();
     }
 
@@ -321,7 +320,11 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     private function criteriaFactory($class, array $args)
     {
-        $criteria = $this->app->make($class, $args);
+        if(method_exists($this->app,"makeWith")) {
+            $criteria = $this->app->makeWith($class, $args);
+        } else {
+            $criteria = $this->app->make($class, $args);
+        }
 
         if ( ! $criteria instanceof Criteria) {
             throw new RepositoryException("{$class} is not an instance of Criteria");
