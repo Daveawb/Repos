@@ -321,7 +321,11 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      */
     private function criteriaFactory($class, array $args)
     {
-        $criteria = $this->app->make($class, $args);
+        if (method_exists($this->app, "makeWith")) {
+            $criteria = $this->app->makeWith($class, $args);
+        } else {
+            $criteria = $this->app->make($class, $args);
+        }
 
         if ( ! $criteria instanceof Criteria) {
             throw new RepositoryException("{$class} is not an instance of Criteria");
