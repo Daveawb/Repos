@@ -184,13 +184,15 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param int $perPage
      * @param array $columns
+     * @param string $pageName
+     * @param null $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = 10, array $columns = ['*'])
+    public function paginate($perPage = 10, array $columns = ['*'], $pageName = 'page', $page = null)
     {
         $this->applyCriteria();
-        
-        return $this->model->paginate($perPage, $columns);
+
+        return $this->model->paginate($perPage, $columns, $pageName, $page);
     }
 
     /**
