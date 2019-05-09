@@ -22,6 +22,6 @@ class NameTerminator extends Terminator{
      */
     public function apply($model, BaseRespository $repository)
     {
-        return $model->where('name', 'David Barker')->first();
+        return $model->where('first_name', 'Wayne')->first();
     }
 }

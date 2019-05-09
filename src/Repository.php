@@ -7,6 +7,9 @@ use Daveawb\Repos\Contracts\AllowTerminators;
 use Daveawb\Repos\Contracts\RepositoryStandards;
 use Daveawb\Repos\Exceptions\RepositoryException;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -44,6 +47,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * On construct create the model
      * @param Container $app
      * @param Collection $criteria
+     * @throws BindingResolutionException
      */
     public function __construct(Container $app, Collection $criteria)
     {
@@ -56,7 +60,9 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * Retrieve all models
      *
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return EloquentCollection
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function findAll(array $columns = ['*'])
     {
@@ -73,6 +79,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $columns
      * @return Model
      * @throws RepositoryException
+     * @throws BindingResolutionException
      */
     public function findBy($field, $id, array $columns = ['*'])
     {
@@ -91,6 +98,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $columns
      * @return Model
      * @throws RepositoryException
+     * @throws BindingResolutionException
      */
     public function findById($id, array $columns = ['*'])
     {
@@ -102,8 +110,10 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param $method
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @return EloquentCollection|Model
      * @throws RepositoryException
+     * @throws BindingResolutionException
+     * @deprecated Will be removed in version 1.0.0 use withBuilder() instead
      */
     public function findByMethod($method, array $columns = ['*'])
     {
@@ -123,6 +133,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array|callable $data
      * @param int $flush
      * @return Model|Builder
+     * @throws BindingResolutionException
      */
     public function create($data, $flush = self::FLUSH)
     {
@@ -150,6 +161,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param $field
      * @param $id
      * @return Model
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function update(array $data, $field, $id)
     {
@@ -170,7 +183,6 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $data
      * @param Model $model
      * @return bool
-     * @throws RepositoryException
      */
     public function updateModel(array $data, Model $model)
     {
@@ -186,7 +198,9 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param array $columns
      * @param string $pageName
      * @param null $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginator
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function paginate($perPage = 10, array $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -201,11 +215,13 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param $field
      * @param $id
      * @return bool|null
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function delete($field, $id)
     {
         $this->applyCriteria();
-        
+
         return $this->model->where($field, $id)->delete();
     }
 
@@ -214,7 +230,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      *
      * @param null $override
      *
-     * @return \Illuminate\Database\Eloquent\Model|mixed
+     * @return Model|mixed
+     * @throws BindingResolutionException
      */
     public function newModel($override = null)
     {
@@ -224,6 +241,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
         $class = '\\'.ltrim($model, '\\');
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         return $this->app->make($class);
     }
 
@@ -257,9 +275,11 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param Criteria $criteria
      * @param array $args
      * @return $this
+     * @throws RepositoryException
      */
     public function getByCriteria($criteria, array $args = [])
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->model = $this->criteriaFactory($criteria, $args)
             ->apply($this->model, $this);
 
@@ -280,6 +300,8 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
     /**
      * @return $this
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function applyCriteria()
     {
@@ -307,6 +329,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
      * @param string $terminator
      * @param array $args
      * @return mixed
+     * @throws RepositoryException
      */
     public function getByTerminator($terminator, array $args = [])
     {
@@ -334,6 +357,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
     /**
      * Flush the repositories model and replace with a fresh one
+     * @throws BindingResolutionException
      */
     public function flushModel()
     {
@@ -341,7 +365,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function getModel()
     {
@@ -349,7 +373,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      */
     public function setModel(Model $model)
     {
@@ -358,6 +382,7 @@ abstract class Repository implements RepositoryStandards, AllowCriteria, AllowTe
 
     /**
      * @return Repository
+     * @throws BindingResolutionException
      */
     public function newInstance()
     {

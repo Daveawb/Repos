@@ -3,7 +3,10 @@
 namespace Daveawb\Repos\Contracts;
 
 use Daveawb\Repos\Exceptions\RepositoryException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\AbstractPaginator;
 
 /**
  * Interface RepositoryStandards
@@ -15,7 +18,7 @@ interface RepositoryStandards {
      * Retrieve all models
      *
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function findAll(array $columns = ['*']);
 
@@ -25,7 +28,7 @@ interface RepositoryStandards {
      * @param $field
      * @param $id
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      * @throws RepositoryException
      */
     public function findBy($field, $id, array $columns = ['*']);
@@ -35,7 +38,7 @@ interface RepositoryStandards {
      *
      * @param $method
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection | \Illuminate\Database\Eloquent\Model
+     * @return Collection | Model
      * @throws RepositoryException
      */
     public function findByMethod($method, array $columns = ['*']);
@@ -44,7 +47,7 @@ interface RepositoryStandards {
      * Persist a new set of data
      *
      * @param callable|array $data
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function create($data);
 
@@ -63,7 +66,7 @@ interface RepositoryStandards {
      *
      * @param int $perPage
      * @param array $columns
-     * @return \Illuminate\Pagination\AbstractPaginator
+     * @return AbstractPaginator
      */
     public function paginate($perPage = 10, array $columns = ['*']);
 
@@ -81,7 +84,7 @@ interface RepositoryStandards {
      *
      * @param null $override
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function newModel($override = null);
 
@@ -95,7 +98,7 @@ interface RepositoryStandards {
     /**
      * Get the model or builder in its current state
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     * @return Builder|Model
      */
     public function getModel();
 

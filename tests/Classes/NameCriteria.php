@@ -21,6 +21,6 @@ class NameCriteria extends Criteria {
      */
     public function apply($model, BaseRepository $repository)
     {
-        return $model->where('name', '=', 'David Barker');
+        return $model->where('first_name', '=', 'Wayne');
     }
 }
