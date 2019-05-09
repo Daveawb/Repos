@@ -12,6 +12,8 @@ use Illuminate\Database\Query\Builder;
  */
 class NameCriteria extends Criteria {
 
+    public static $FIRST_NAME = "Wayne";
+
     /**
      * Add criteria to the next query by the repository.
      *
@@ -21,6 +23,6 @@ class NameCriteria extends Criteria {
      */
     public function apply($model, BaseRepository $repository)
     {
-        return $model->where('first_name', '=', 'Wayne');
+        return $model->where('first_name', '=', static::$FIRST_NAME);
     }
 }

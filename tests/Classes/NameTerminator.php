@@ -12,6 +12,8 @@ use Illuminate\Database\Query\Builder;
  */
 class NameTerminator extends Terminator{
 
+    public static $FIRST_NAME;
+
     /**
      * Get data using the models current state.
      *
@@ -22,6 +24,6 @@ class NameTerminator extends Terminator{
      */
     public function apply($model, BaseRespository $repository)
     {
-        return $model->where('first_name', 'Wayne')->first();
+        return $model->where('first_name', '=', static::$FIRST_NAME)->first();
     }
 }

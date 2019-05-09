@@ -1,5 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
 
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpParamsInspection */
 
 use Classes\NameCriteria;
@@ -36,6 +37,9 @@ class RepositoryTest extends TestCase {
     public function setUp(): void
     {
         parent::setUp();
+
+        NameTerminator::$FIRST_NAME = "Wayne";
+        NameCriteria::$FIRST_NAME = "Wayne";
 
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
 
